@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout E-commerce</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f6fa;
+      color: #1d2430;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, #ffffff 0, #f3f6fa 260px),
+        #f3f6fa;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 36px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-end;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      max-width: 680px;
+      color: #5a6676;
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #334155;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .dot.ok {
+      background: #14845f;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid #d8e0ea;
+      border-radius: 8px;
+      box-shadow: 0 18px 48px rgba(30, 41, 59, 0.09);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid #e5ebf2;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 20px;
+    }
+
+    .product {
+      position: relative;
+      display: grid;
+      gap: 10px;
+      min-height: 154px;
+      padding: 16px;
+      border: 1px solid #d8e0ea;
+      border-radius: 8px;
+      background: #fbfdff;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .product:hover,
+    .product.active {
+      border-color: #0f766e;
+      box-shadow: 0 10px 26px rgba(15, 118, 110, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .product strong {
+      display: block;
+      font-size: 17px;
+      color: #172033;
+    }
+
+    .product span {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .price {
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .stock {
+      justify-self: start;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #e6f5ef;
+      color: #14543f;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .checkout {
+      padding: 20px;
+    }
+
+    .selected-product {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid #d8e0ea;
+      border-radius: 8px;
+      background: #f8fafc;
+      margin-bottom: 16px;
+    }
+
+    .selected-product strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: 700;
+      color: #293548;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #b9c5d4;
+      border-radius: 6px;
+      padding: 0 12px;
+      background: #ffffff;
+      color: #1d2430;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(15, 118, 110, 0.18);
+      border-color: #0f766e;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button.action {
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button.primary {
+      background: #0f766e;
+      color: #ffffff;
+    }
+
+    button.secondary {
+      background: #e8eef5;
+      color: #263548;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
+
+    .summary {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #475569;
+    }
+
+    .summary-row.total {
+      padding-top: 10px;
+      border-top: 1px solid #d8e0ea;
+      color: #172033;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    output {
+      display: block;
+      min-height: 58px;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #eef3f8;
+      color: #334155;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    output.success {
+      background: #e6f6ef;
+      color: #14543f;
+    }
+
+    output.error {
+      background: #fdecec;
+      color: #8f1d1d;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      padding: 20px;
+      max-height: 320px;
+      overflow: auto;
+    }
+
+    .event {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .event strong {
+      font-size: 14px;
+    }
+
+    .event span {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      padding: 20px;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .flow-number {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #17324d;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .flow-step span {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
+      header,
+      .grid,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        display: grid;
+        align-items: start;
+      }
+
+      .status-bar {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 18px;
+      }
+
+      .products,
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-header,
+      .selected-product {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Checkout E-commerce</h1>
+        <p class="subtitle">Painel de pedidos com validacao de estoque, evento RabbitMQ e retorno claro para demonstracao da API.</p>
+      </div>
+      <div class="status-bar" aria-label="Status dos servicos">
+        <span class="pill"><span class="dot ok"></span>Checkout 8082</span>
+        <span class="pill"><span class="dot ok"></span>Estoque 8090</span>
+        <span class="pill"><span class="dot ok"></span>RabbitMQ 5672</span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Catalogo</h2>
+            <span class="muted">Escolha um produto para montar o pedido.</span>
+          </div>
+          <span class="pill" id="catalog-count">4 produtos</span>
+        </div>
+        <div class="products" id="products"></div>
+      </div>
+
+      <aside class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Novo pedido</h2>
+            <span class="muted">Consulta o estoque antes de confirmar.</span>
+          </div>
+        </div>
+
+        <form class="checkout" id="pedido-form">
+          <div class="selected-product">
+            <div>
+              <strong id="selected-name">Produto A</strong>
+              <span class="muted" id="selected-desc">Camiseta premium</span>
+            </div>
+            <span class="price" id="selected-price">R$ 50,00</span>
+          </div>
+
+          <label for="produto">Produto</label>
+          <select id="produto" name="produto"></select>
+
+          <label for="quantidade">Quantidade</label>
+          <input id="quantidade" name="quantidade" type="number" min="1" value="2">
+
+          <div class="actions">
+            <button class="action secondary" type="button" id="consultar">Consultar estoque</button>
+            <button class="action primary" type="submit">Criar pedido</button>
+          </div>
+
+          <div class="summary" aria-label="Resumo do pedido">
+            <div class="summary-row">
+              <span>Produto</span>
+              <strong id="summary-product">produto_A</strong>
+            </div>
+            <div class="summary-row">
+              <span>Quantidade</span>
+              <strong id="summary-quantity">2</strong>
+            </div>
+            <div class="summary-row total">
+              <span>Total estimado</span>
+              <strong id="summary-total">R$ 100,00</strong>
+            </div>
+          </div>
+
+          <output id="resultado">Selecione um produto e consulte o estoque.</output>
+        </form>
+      </aside>
+    </section>
+
+    <section class="bottom-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Historico da sessao</h2>
+            <span class="muted">Registros gerados pelas acoes na tela.</span>
+          </div>
+          <button class="action secondary" type="button" id="limpar">Limpar</button>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Fluxo da arquitetura</h2>
+            <span class="muted">Use esta area para explicar ao professor.</span>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="flow-step">
+            <span class="flow-number">1</span>
+            <div><strong>Checkout recebe pedido</strong><span>A tela envia um POST para /pedidos com produto e quantidade.</span></div>
+          </div>
+          <div class="flow-step">
+            <span class="flow-number">2</span>
+            <div><strong>Estoque valida disponibilidade</strong><span>O checkout consulta o estoque-service em localhost:8090.</span></div>
+          </div>
+          <div class="flow-step">
+            <span class="flow-number">3</span>
+            <div><strong>RabbitMQ recebe evento</strong><span>Se aprovado, o checkout publica PedidoCriado na exchange.</span></div>
+          </div>
+          <div class="flow-step">
+            <span class="flow-number">4</span>
+            <div><strong>Consumidor processa</strong><span>O estoque-service consome a fila pedido.criado.estoque.queue.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const products = [
+      { id: "produto_A", name: "Produto A", desc: "Camiseta premium", price: 50, stock: 10 },
+      { id: "produto_B", name: "Produto B", desc: "Tenis casual", price: 120, stock: 5 },
+      { id: "produto_C", name: "Produto C", desc: "Mochila urbana", price: 180, stock: 18 },
+      { id: "produto_D", name: "Produto D", desc: "Relogio digital", price: 240, stock: 3 }
+    ];
+
+    const form = document.querySelector("#pedido-form");
+    const produtoSelect = document.querySelector("#produto");
+    const quantidadeInput = document.querySelector("#quantidade");
+    const productsEl = document.querySelector("#products");
+    const resultado = document.querySelector("#resultado");
+    const timeline = document.querySelector("#timeline");
+    const consultarButton = document.querySelector("#consultar");
+    const limparButton = document.querySelector("#limpar");
+
+    const selectedName = document.querySelector("#selected-name");
+    const selectedDesc = document.querySelector("#selected-desc");
+    const selectedPrice = document.querySelector("#selected-price");
+    const summaryProduct = document.querySelector("#summary-product");
+    const summaryQuantity = document.querySelector("#summary-quantity");
+    const summaryTotal = document.querySelector("#summary-total");
+
+    function money(value) {
+      return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function currentProduct() {
+      return products.find((product) => product.id === produtoSelect.value) || products[0];
+    }
+
+    function currentQuantity() {
+      return Math.max(1, Number(quantidadeInput.value || 1));
+    }
+
+    function setResult(type, message) {
+      resultado.className = type;
+      resultado.textContent = message;
+    }
+
+    function addEvent(title, detail) {
+      const item = document.createElement("div");
+      item.className = "event";
+      item.innerHTML = `<strong>${title}</strong><span>${new Date().toLocaleTimeString("pt-BR")} - ${detail}</span>`;
+      timeline.prepend(item);
+    }
+
+    function renderProducts() {
+      productsEl.innerHTML = "";
+      produtoSelect.innerHTML = "";
+
+      products.forEach((product) => {
+        const option = document.createElement("option");
+        option.value = product.id;
+        option.textContent = `${product.name} - ${money(product.price)}`;
+        produtoSelect.append(option);
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "product";
+        button.dataset.product = product.id;
+        button.innerHTML = `
+          <strong>${product.name}</strong>
+          <span>${product.desc}</span>
+          <span class="price">${money(product.price)}</span>
+          <span class="stock">Estoque base: ${product.stock}</span>
+        `;
+        button.addEventListener("click", () => {
+          produtoSelect.value = product.id;
+          updateSummary();
+          setResult("", "Produto selecionado. Consulte o estoque ou crie o pedido.");
+        });
+        productsEl.append(button);
+      });
+    }
+
+    function updateSummary() {
+      const product = currentProduct();
+      const quantity = currentQuantity();
+
+      selectedName.textContent = product.name;
+      selectedDesc.textContent = product.desc;
+      selectedPrice.textContent = money(product.price);
+      summaryProduct.textContent = product.id;
+      summaryQuantity.textContent = quantity;
+      summaryTotal.textContent = money(product.price * quantity);
+
+      document.querySelectorAll(".product").forEach((card) => {
+        card.classList.toggle("active", card.dataset.product === product.id);
+      });
+    }
+
+    async function consultarEstoque() {
+      const product = currentProduct();
+      const quantity = currentQuantity();
+
+      consultarButton.disabled = true;
+      setResult("", "Consultando estoque...");
+
+      try {
+        const response = await fetch(`/pedidos/estoque?produto=${encodeURIComponent(product.id)}&quantidade=${quantity}`);
+        const contentType = response.headers.get("content-type") || "";
+        const data = contentType.includes("application/json") ? await response.json() : await response.text();
+
+        if (!response.ok) {
+          const message = typeof data === "string" ? data : "Erro ao consultar estoque.";
+          setResult("error", message);
+          addEvent("Consulta recusada", `${product.id}, quantidade ${quantity}`);
+          return false;
+        }
+
+        const message = `${data.mensagem}. Disponivel: ${data.quantidadeDisponivel}. Solicitado: ${data.quantidadeSolicitada}.`;
+        setResult(data.disponivel ? "success" : "error", message);
+        addEvent("Estoque consultado", message);
+        return data.disponivel;
+      } catch (error) {
+        setResult("error", "Nao foi possivel consultar o estoque.");
+        addEvent("Falha na consulta", "Servico de estoque indisponivel");
+        return false;
+      } finally {
+        consultarButton.disabled = false;
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const submitButton = form.querySelector("button[type='submit']");
+      const product = currentProduct();
+      const quantity = currentQuantity();
+
+      submitButton.disabled = true;
+      setResult("", "Enviando pedido para o checkout...");
+
+      try {
+        const response = await fetch("/pedidos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ produto: product.id, quantidade: quantity })
+        });
+
+        const text = await response.text();
+        setResult(response.ok ? "success" : "error", text);
+        addEvent(response.ok ? "Pedido aprovado" : "Pedido recusado", `${product.id}, quantidade ${quantity} - ${text}`);
+      } catch (error) {
+        setResult("error", "Nao foi possivel comunicar com o checkout.");
+        addEvent("Falha no pedido", "Checkout indisponivel");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    consultarButton.addEventListener("click", consultarEstoque);
+    limparButton.addEventListener("click", () => {
+      timeline.innerHTML = "";
+      addEvent("Historico limpo", "Pronto para uma nova demonstracao");
+    });
+    produtoSelect.addEventListener("change", updateSummary);
+    quantidadeInput.addEventListener("input", updateSummary);
+
+    renderProducts();
+    updateSummary();
+    addEvent("Interface carregada", "Checkout, estoque e RabbitMQ prontos para demonstracao");
+  </script>
+</body>
+</html>
