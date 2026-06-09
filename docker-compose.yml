@@ -1,48 +1,15 @@
+version: '3.8'
+
 services:
+
   rabbitmq:
-    image: rabbitmq:3.13-management
-    container_name: ecommerce-rabbitmq
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: ecommerce
-      RABBITMQ_DEFAULT_PASS: ecommerce
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  estoque-service:
-    build:
-      context: ./estoque-service
-    container_name: ecommerce-estoque-service
-    ports:
-      - "8090:8090"
     environment:
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: ecommerce
-      SPRING_RABBITMQ_PASSWORD: ecommerce
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
-  checkout-api:
-    build:
-      context: ./checkout-api
-    container_name: ecommerce-checkout-api
-    ports:
-      - "8082:8082"
-    environment:
-      ESTOQUE_SERVICE_URL: http://estoque-service:8090
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: ecommerce
-      SPRING_RABBITMQ_PASSWORD: ecommerce
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      estoque-service:
-        condition: service_started
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
